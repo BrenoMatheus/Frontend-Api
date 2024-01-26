@@ -1,7 +1,7 @@
 import { Box, Button, Divider, Icon, Paper, Skeleton, Theme, Typography, useMediaQuery, useTheme } from '@mui/material';
 
 
-interface IFerramentasDeDetalheProps {
+interface IDetailToolProps {
   textoBotaoNovo?: string;
 
   mostrarBotaoNovo?: boolean;
@@ -22,7 +22,7 @@ interface IFerramentasDeDetalheProps {
   aoClicarEmSalvar?: () => void;
   aoClicarEmSalvarEFechar?: () => void;
 }
-export const FerramentasDeDetalhe: React.FC<IFerramentasDeDetalheProps> = ({
+export const DetailTool: React.FC<IDetailToolProps> = ({
   textoBotaoNovo = 'Novo',
 
   mostrarBotaoNovo = true,

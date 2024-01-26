@@ -1,49 +1,57 @@
 import { useEffect, useState } from 'react';
-import { Box, Grid, LinearProgress, Paper, Typography } from '@mui/material';
+import { Box, Grid, LinearProgress, MenuItem, Paper, Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import * as yup from 'yup';
 
-import { CidadesService } from '../../shared/services/api/cidades/CidadesService';
+import { TechniciansService } from '../../shared/services/api/technicians/TechniciansService';
 import { VTextField, VForm, useVForm, IVFormErrors } from '../../shared/forms';
-import { FerramentasDeDetalhe } from '../../shared/components';
+import { DetailTool } from '../../shared/components';
 import { LayoutBaseDePagina } from '../../shared/layouts';
 
 
 interface IFormData {
-  nome: string;
+  name: string,
+  email: string,
+  category: string,
+  description?: string,
 }
 const formValidationSchema: yup.SchemaOf<IFormData> = yup.object().shape({
-  nome: yup.string().required().min(3),
+  name: yup.string().required().min(3).max(70),
+  email: yup.string().required().email(),
+  category: yup.string().required().min(3).max(70),
+  description: yup.string().optional(),
 });
 
-export const DetalheDeCidades: React.FC = () => {
+export const DetailTechnicians: React.FC = () => {
   const { formRef, save, saveAndClose, isSaveAndClose } = useVForm();
   const { id = 'nova' } = useParams<'id'>();
   const navigate = useNavigate();
-
-
   const [isLoading, setIsLoading] = useState(false);
-  const [nome, setNome] = useState('');
+  const [name, setName] = useState('');
+
 
   useEffect(() => {
     if (id !== 'nova') {
       setIsLoading(true);
 
-      CidadesService.getById(Number(id))
+      TechniciansService.getById(Number(id))
         .then((result) => {
           setIsLoading(false);
 
           if (result instanceof Error) {
             alert(result.message);
-            navigate('/cidades');
+            navigate('/technicians');
           } else {
-            setNome(result.nome);
+            setName(result.name);
             formRef.current?.setData(result);
           }
         });
     } else {
       formRef.current?.setData({
-        nome: '',
+        setName: '',
+        setSerieNumber: '',
+        setType: '',
+        setDescription: '',
       });
     }
   }, [id]);
@@ -56,7 +64,7 @@ export const DetalheDeCidades: React.FC = () => {
         setIsLoading(true);
 
         if (id === 'nova') {
-          CidadesService
+          TechniciansService
             .create(dadosValidados)
             .then((result) => {
               setIsLoading(false);
@@ -65,14 +73,14 @@ export const DetalheDeCidades: React.FC = () => {
                 alert(result.message);
               } else {
                 if (isSaveAndClose()) {
-                  navigate('/cidades');
+                  navigate('/technicians');
                 } else {
-                  navigate(`/cidades/detalhe/${result}`);
+                  navigate(`/technicians/detail/${result}`);
                 }
               }
             });
         } else {
-          CidadesService
+          TechniciansService
             .updateById(Number(id), { id: Number(id), ...dadosValidados })
             .then((result) => {
               setIsLoading(false);
@@ -81,7 +89,7 @@ export const DetalheDeCidades: React.FC = () => {
                 alert(result.message);
               } else {
                 if (isSaveAndClose()) {
-                  navigate('/cidades');
+                  navigate('/technicians');
                 }
               }
             });
@@ -102,13 +110,13 @@ export const DetalheDeCidades: React.FC = () => {
 
   const handleDelete = (id: number) => {
     if (confirm('Realmente deseja apagar?')) {
-      CidadesService.deleteById(id)
+      TechniciansService.deleteById(id)
         .then(result => {
           if (result instanceof Error) {
             alert(result.message);
           } else {
             alert('Registro apagado com sucesso!');
-            navigate('/cidades');
+            navigate('/technicians');
           }
         });
     }
@@ -117,9 +125,9 @@ export const DetalheDeCidades: React.FC = () => {
 
   return (
     <LayoutBaseDePagina
-      titulo={id === 'nova' ? 'Nova cidade' : nome}
+      titulo={id === 'nova' ? 'New Technician' : name}
       barraDeFerramentas={
-        <FerramentasDeDetalhe
+        <DetailTool
           textoBotaoNovo='Nova'
           mostrarBotaoSalvarEFechar
           mostrarBotaoNovo={id !== 'nova'}
@@ -127,9 +135,9 @@ export const DetalheDeCidades: React.FC = () => {
 
           aoClicarEmSalvar={save}
           aoClicarEmSalvarEFechar={saveAndClose}
-          aoClicarEmVoltar={() => navigate('/cidades')}
+          aoClicarEmVoltar={() => navigate('/technicians')}
           aoClicarEmApagar={() => handleDelete(Number(id))}
-          aoClicarEmNovo={() => navigate('/cidades/detalhe/nova')}
+          aoClicarEmNovo={() => navigate('/technicians/detail/nova')}
         />
       }
     >
@@ -145,25 +153,72 @@ export const DetalheDeCidades: React.FC = () => {
             )}
 
             <Grid item>
-              <Typography variant='h6'>Geral</Typography>
+              <Typography variant='h6'>Register Technician</Typography>
+            </Grid>
+
+
+            <Grid container item direction="row" spacing={2}>
+              <Grid item direction="column">
+                <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
+                  <VTextField
+                    fullWidth
+                    name='name'
+                    label='Nome'
+                    disabled={isLoading}
+                    onChange={e => setName(e.target.value)}
+                  />
+                </Grid>
+              </Grid>
+              <Grid item direction="column">
+                <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
+                  <VTextField
+                    fullWidth
+                    name='email'
+                    label='Email'
+                    disabled={isLoading}
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid container item direction="row" spacing={2}>
+              <Grid item xs={12} sm={12} md={8} lg={6} xl={4}>
+                <VTextField
+                  fullWidth
+                  select
+                  name='category'
+                  label='Categoria'
+                  disabled={isLoading}
+                >
+                  <MenuItem key="1" value="Mecanico">
+                    Mecanico
+                  </MenuItem>
+                  <MenuItem key="2" value="Eletricista">
+                    Eletricista
+                  </MenuItem>
+                  <MenuItem key="3" value="TTT">
+                    TTT
+                  </MenuItem>
+                </VTextField>
+
+              </Grid>
             </Grid>
 
             <Grid container item direction="row" spacing={2}>
-              <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
+              <Grid item xs={12} sm={12} md={8} lg={6} xl={4}>
                 <VTextField
                   fullWidth
-                  name='nome'
-                  label='Nome'
+                  name='description'
+                  label='Descrição'
                   disabled={isLoading}
-                  onChange={e => setNome(e.target.value)}
                 />
               </Grid>
             </Grid>
+
 
           </Grid>
 
         </Box>
       </VForm>
-    </LayoutBaseDePagina>
+    </LayoutBaseDePagina >
   );
 };

@@ -11,9 +11,9 @@ export const Environment = {
   /**
    * Texto exibido quando nenhum registro é encontrado em uma listagem
    */
-  LISTAGEM_VAZIA: 'Nenhum registro encontrado.',
+  EMPTY_LISTING: 'Nenhum registro encontrado.',
   /**
    * Url base de consultado dos dados dessa aplicação
    */
-  URL_BASE: 'https://owner-avatar-api-rest-node-typescript.onrender.com',
+  URL_BASE: 'http://localhost:3333',
 };

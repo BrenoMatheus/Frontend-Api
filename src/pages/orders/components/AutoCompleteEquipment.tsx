@@ -1,26 +1,26 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Autocomplete, CircularProgress, TextField } from '@mui/material';
 
-import { CidadesService } from '../../../shared/services/api/cidades/CidadesService';
+import { EquipmentsService } from '../../../shared/services/api/equipments/EquipmentsService';
 import { useDebounce } from '../../../shared/hooks';
 import { useField } from '@unform/core';
 
 
-type TAutoCompleteOption = {
+type TAutoCompleteEquipmentOption = {
   id: number;
   label: string;
 }
 
-interface IAutoCompleteCidadeProps {
+interface IAutoCompleteEquipmentProps {
   isExternalLoading?: boolean;
 }
-export const AutoCompleteCidade: React.FC<IAutoCompleteCidadeProps> = ({ isExternalLoading = false }) => {
-  const { fieldName, registerField, defaultValue, error, clearError } = useField('cidadeId');
+export const AutoCompleteEquipment: React.FC<IAutoCompleteEquipmentProps> = ({ isExternalLoading = false }) => {
+  const { fieldName, registerField, defaultValue, error, clearError } = useField('equipmentID');
   const { debounce } = useDebounce();
 
   const [selectedId, setSelectedId] = useState<number | undefined>(defaultValue);
 
-  const [opcoes, setOpcoes] = useState<TAutoCompleteOption[]>([]);
+  const [opcoes, setOpcoes] = useState<TAutoCompleteEquipmentOption[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [busca, setBusca] = useState('');
 
@@ -36,16 +36,15 @@ export const AutoCompleteCidade: React.FC<IAutoCompleteCidadeProps> = ({ isExter
     setIsLoading(true);
 
     debounce(() => {
-      CidadesService.getAll(1, busca, selectedId)
+      EquipmentsService.getAll(1, busca, selectedId)
         .then((result) => {
           setIsLoading(false);
 
           if (result instanceof Error) {
             // alert(result.message);
           } else {
-            console.log(result);
-
-            setOpcoes(result.data.map(cidade => ({ id: cidade.id, label: cidade.nome })));
+            //console.log(result);
+            setOpcoes(result.data.map(equipment => ({ id: equipment.id, label: equipment.name })));
           }
         });
     });
@@ -81,7 +80,7 @@ export const AutoCompleteCidade: React.FC<IAutoCompleteCidadeProps> = ({ isExter
         <TextField
           {...params}
 
-          label="Cidade"
+          label="Equipamento"
           error={!!error}
           helperText={error}
         />

@@ -20,14 +20,13 @@ export const VTextField: React.FC<TVTextFieldProps> = ({ name, ...rest }) => {
     });
   }, [registerField, fieldName, value]);
 
-
   return (
     <TextField
       {...rest}
 
       error={!!error}
       helperText={error}
-      defaultValue={defaultValue}
+      defaultValue={defaultValue} 
 
       value={value}
       onChange={e => { setValue(e.target.value); rest.onChange?.(e); }}

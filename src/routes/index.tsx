@@ -4,10 +4,14 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useDrawerContext } from '../shared/contexts';
 import {
   Dashboard,
-  DetalheDePessoas,
-  ListagemDePessoas,
-  DetalheDeCidades,
-  ListagemDeCidades,
+  DetailEquipments,
+  ListEquipments,
+  ListTechnicians,
+  DetailTechnicians,
+  DetailItems,
+  ListItems,
+  ListOrders,
+  DetailOrders,
 } from '../pages';
 
 export const AppRoutes = () => {
@@ -21,14 +25,24 @@ export const AppRoutes = () => {
         label: 'Página inicial',
       },
       {
-        icon: 'location_city',
-        path: '/cidades',
-        label: 'Cidades',
+        icon: 'agriculture',
+        path: '/equipments',
+        label: 'Equipamentos',
       },
       {
-        icon: 'people',
-        path: '/pessoas',
-        label: 'Pessoas',
+        icon: 'manage_accounts',
+        path: '/technicians',
+        label: 'Técnicos',
+      },
+      {
+        icon: 'handyman',
+        path: '/items',
+        label: 'Almoxarifado',
+      },
+      {
+        icon: 'content_paste',
+        path: '/orders',
+        label: 'Ordem de Serviço',
       },
     ]);
   }, []);
@@ -37,11 +51,17 @@ export const AppRoutes = () => {
     <Routes>
       <Route path="/pagina-inicial" element={<Dashboard />} />
 
-      <Route path="/pessoas" element={<ListagemDePessoas />} />
-      <Route path="/pessoas/detalhe/:id" element={<DetalheDePessoas />} />
+      <Route path="/equipments" element={<ListEquipments />} />
+      <Route path="/equipments/detail/:id" element={<DetailEquipments />} />
 
-      <Route path="/cidades" element={<ListagemDeCidades />} />
-      <Route path="/cidades/detalhe/:id" element={<DetalheDeCidades />} />
+      <Route path="/technicians" element={<ListTechnicians />} />
+      <Route path="/technicians/detail/:id" element={<DetailTechnicians />} />
+
+      <Route path="/items" element={<ListItems />} />
+      <Route path="/items/detail/:id" element={<DetailItems />} />
+
+      <Route path="/orders" element={<ListOrders />} />
+      <Route path="/orders/detail/:id" element={<DetailOrders />} />
 
       <Route path="*" element={<Navigate to="/pagina-inicial" />} />
     </Routes>
